@@ -1,0 +1,62 @@
+router.param("id" , (res,req,nxt,val) => {
+    if(Number(val)){
+        req.id=val;
+        nxt();
+    } else {
+       res.send('error');
+    }
+    
+});
+
+
+router.get("/:id" , (req,res) => {
+    let id = req.id;
+    const std = Students.find((val,index,arr)=> {
+     return val.id == id;
+    });
+    if (std) {
+        res.json(std);
+    } else {
+        res.send('not found');
+    }
+});
+
+
+router.get('/' , studentController);
+
+router.post("/", (req,res) => {
+    let valid = validator(req.body);
+    if (valid) { 
+    req.body.id=Students.length+1;
+    Students.push(req.body);
+    res.json(req.body);}
+    else {
+        res.status(443).send('forbbiden');
+    }
+   
+});
+
+router.delete("/:id", (req,res)=> {
+    
+   let idx = Students.findIndex((val) => {return val.id == req.params.id});
+   if(idx != -1){
+   //let deletedstd = 
+   Students.splice(idx, 1);
+   res.send('done');
+   }else {
+    res.send('not found');
+   }
+});
+
+
+router.put("/:id", (req,res)=> {
+   let idx = Students.findIndex((val) => {return val.id == req.params.id});
+   if(idx != -1){
+   for(i in req.body) {
+    Students[idx][i] = req.body[i];
+   }
+   res.json(Students[idx]);
+   }else {
+    res.send('not found');
+   }
+});
